@@ -1,23 +1,19 @@
-import { DataSource } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DynamicModule } from '@nestjs/common';
 
-export const databaseProviders = [
-  {
-    provide: 'DATA_SOURCE',
-    inject: [ConfigService],
-    useFactory: async (config: ConfigService) => {
-      const dataSource = new DataSource({
-        type: 'postgres',
-        host: config.get('DB_HOST'),
-        port: +config.get('DB_PORT'),
-        username: config.get('DB_USERNAME'),
-        password: config.get('DB_PASSWORD'),
-        database: config.get('DB_NAME'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: false,
-      });
+export const DatabaseProviders: DynamicModule = TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
 
-      return dataSource.initialize();
-    },
-  },
-];
+  useFactory: (config: ConfigService) => ({
+    type: 'postgres',
+    host: config.get('DB_HOST'),
+    port: +config.get('DB_PORT'),
+    username: config.get('DB_USERNAME'),
+    password: config.get('DB_PASSWORD'),
+    database: config.get('DB_NAME'),
+    autoLoadEntities: true,
+    synchronize: true,
+  }),
+});
