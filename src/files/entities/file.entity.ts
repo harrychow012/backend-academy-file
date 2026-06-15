@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ schema: 'files', name: 'file' })
 export class File {
@@ -6,23 +12,29 @@ export class File {
   id: number;
 
   @Column()
-  model_id: number;
+  estudiante_id: number;
 
-  @Column({ type: 'bigint' })
+  @Column()
   user_id: number;
 
-  @Column({ type: 'bigint' })
+  @Column()
   user_updated_id: number;
 
-  @Column({ type: 'timestamp', default: () => 'now()' })
-  created_at: Date;
-
-  @Column({ type: 'timestamp', default: () => 'now()' })
-  updated_at: Date;
+  @Column()
+  file_name: string;
 
   @Column()
   mime: string;
 
   @Column()
-  file_name: string;
+  url: string;
+
+  @Column({ default: false })
+  is_avatar: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }

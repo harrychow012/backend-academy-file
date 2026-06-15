@@ -2,12 +2,11 @@ services:
   academy-file:
     image: postgres:16
     environment:
-      POSTGRES_DB: academy-file
+      POSTGRES_DB: academy
       POSTGRES_PASSWORD: 12345678
       POSTGRES_USER: postgres
     ports:
-      - '5435:5434'
-    command: -p 5434
+      - "5435:5432"
 
   pgadmin:
     image: dpage/pgadmin4
@@ -15,8 +14,22 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - '5052:80'
+      - "5052:80"
     depends_on:
       - academy-file
 
-      
+  files-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3005:3005"
+    environment:
+      DB_HOST: academy-file
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: 12345678
+      DB_NAME: academy
+      PORT: 3005
+    depends_on:
+      - academy-file
